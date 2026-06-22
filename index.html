@@ -1149,11 +1149,12 @@
 
     <div id="petals"></div>
 
+    <script src="config.js"></script>
     <script>
         /* =========================================================
            1. KONFIGURACJA  —  ZMIEŃ TO!
            ========================================================= */
-        const FORMSPREE_ENDPOINT = "";
+        const FORMSPREE_ENDPOINT = window.APP_CONFIG?.FORMSPREE_ENDPOINT || "";
         const TWOJE_IMIE = "Wiktor";
 
         /* =========================================================
@@ -1198,11 +1199,36 @@
                 anim.playSegments([segment], true);
             }
 
+            function onIdleFrameGuard() {
+                if (state !== 'idle') {
+                    const anim = getAnim();
+                    if (anim) anim.removeEventListener('enterFrame', onIdleFrameGuard);
+                    return;
+                }
+                const anim = getAnim();
+                if (!anim) return;
+                // Na mobile segment idle czasem „wylewa” się do hover/click — trzymaj tylko 0–20
+                if (anim.currentFrame >= IDLE[1] - 0.5) {
+                    anim.goToAndStop(IDLE[0], true);
+                    anim.playSegments([[IDLE[0], IDLE[1]]], true);
+                }
+            }
+
             function startIdle() {
                 if (introEnded || state === 'clicking') return;
+                const anim = getAnim();
+                if (!anim) return;
+
                 state = 'idle';
                 introHit.disabled = false;
-                playSeg(IDLE, true);
+
+                anim.removeEventListener('enterFrame', onIdleFrameGuard);
+                anim.removeEventListener('complete', onAnimComplete);
+                anim.removeEventListener('enterFrame', onAnimFrame);
+                anim.loop = false;
+                anim.goToAndStop(IDLE[0], true);
+                anim.playSegments([[IDLE[0], IDLE[1]]], true);
+                anim.addEventListener('enterFrame', onIdleFrameGuard);
             }
 
             function applyHoverFrame() {
@@ -1294,9 +1320,11 @@
                 hideIntroHint();
                 clearClickFallback();
 
+                anim.removeEventListener('enterFrame', onIdleFrameGuard);
                 anim.removeEventListener('complete', onAnimComplete);
                 anim.removeEventListener('enterFrame', onAnimFrame);
                 anim.loop = false;
+                anim.goToAndStop(CLICK[0], true);
                 anim.playSegments([[CLICK[0], CLICK[1]]], true);
                 anim.addEventListener('complete', onAnimComplete);
                 anim.addEventListener('enterFrame', onAnimFrame);
@@ -1313,8 +1341,10 @@
                 introHit.disabled = true;
                 const anim = getAnim();
                 if (anim) {
+                    anim.removeEventListener('enterFrame', onIdleFrameGuard);
                     anim.removeEventListener('complete', onAnimComplete);
                     anim.removeEventListener('enterFrame', onAnimFrame);
+                    anim.stop();
                 }
                 document.getElementById('intro').classList.add('hide');
                 document.getElementById('skip').style.display = 'none';
@@ -1325,9 +1355,16 @@
 
             function tryStart() {
                 if (introEnded) return true;
-                if (!getAnim()) return false;
+                const anim = getAnim();
+                if (!anim) return false;
+
                 fitCover();
-                if (state === 'waiting') startIdle();
+                if (state !== 'waiting') return true;
+
+                anim.autoplay = false;
+                anim.stop();
+                anim.goToAndStop(IDLE[0], true);
+                startIdle();
                 return true;
             }
 

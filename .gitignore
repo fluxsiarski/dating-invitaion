@@ -2,3 +2,6 @@
 *.log
 .env
 .env.*
+
+# Lokalna konfiguracja (Formspree itd.) — na Pages generowany z GitHub Secret
+config.js

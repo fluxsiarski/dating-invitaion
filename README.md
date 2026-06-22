@@ -63,14 +63,31 @@ Otwórz [http://localhost:8000](http://localhost:8000).
 
 ## Konfiguracja
 
-W `index.html` na początku skryptu:
+### Formspree (bez wklejania URL do GitHuba)
 
-```javascript
-const FORMSPREE_ENDPOINT = "";  // URL formularza Formspree
-const TWOJE_IMIE = "Wiktor";    // Twoje imię w powiadomieniu mailowym
+Endpoint Formspree jest w **`config.js`** — ten plik **nie jest** w repozytorium.
+
+**Lokalnie:**
+
+```bash
+cp config.example.js config.js
 ```
 
-Aktywności edytujesz w tablicy `ACTIVITIES` w tym samym pliku.
+W `config.js` wklej swój URL Formspree.
+
+**GitHub Pages:** w repozytorium → **Settings → Secrets and variables → Actions** → **New repository secret**:
+
+| Name | Value |
+|------|--------|
+| `FORMSPREE_ENDPOINT` | `https://formspree.io/f/...` |
+
+Przy każdym pushu na `main` workflow generuje `config.js` z tego secreta i publikuje stronę.
+
+W **Settings → Pages** ustaw **Source: GitHub Actions** (nie „Deploy from branch”).
+
+Imię w mailu nadal edytujesz w `index.html` (`TWOJE_IMIE`). Aktywności — tablica `ACTIVITIES`.
+
+> URL Formspree nie będzie w kodzie na GitHubie, ale na **opublikowanej stronie** nadal jest w `config.js` w przeglądarce — to normalne dla statycznych stron. Chroni przed upublicznieniem w repo i historii commitów.
 
 ---
 
@@ -80,6 +97,8 @@ Aktywności edytujesz w tablicy `ACTIVITIES` w tym samym pliku.
 date-invite/
 ├── index.html
 ├── hand.json
+├── config.example.js   # szablon — skopiuj jako config.js
+├── config.js           # lokalnie; na Pages z GitHub Secret
 ├── wroclaw.jpg
 ├── README.md
 └── docs/media/screenshots/
