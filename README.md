@@ -2,37 +2,31 @@
 
 Interaktywna, jednostronicowa strona-zaproszenie na randkę / spotkanie. Zamiast suchego „kiedy masz czas?” — animowane intro, zabawny przycisk „Nie”, wybor aktywności z koszykiem i „paragon” podsumowujący plan.
 
-> **Status zrzutów:** Placeholdery poniżej — dodaj obrazy według [instrukcji w `docs/media/SCREENSHOTS.md`](docs/media/SCREENSHOTS.md).
-
 ---
 
 ## Zrzuty ekranu
 
 ### Intro (animacja Lottie)
 
-| Desktop | Mobile |
-|---------|--------|
-| ![Intro — desktop](docs/media/screenshots/01-intro-desktop.png) | ![Intro — mobile](docs/media/screenshots/02-intro-mobile.png) |
+![Intro](docs/media/screenshots/01-intro.png)
 
-Pełnoekranowa animacja `hand.json`: kliknij / dotknij przycisk → animacja kliku → wejście na stronę. Na desktopie palec reaguje na ruch myszy (hover).
+Pełnoekranowa animacja `hand.json`: kliknij przycisk → animacja kliku → wejście na stronę. Palec reaguje na ruch myszy (hover).
 
 ### Główny flow
 
-![Pytanie Tak/Nie](docs/media/screenshots/03-ask-desktop.png)
+![Pytanie Tak/Nie](docs/media/screenshots/02-ask.png)
 
-![Uciekający przycisk „Nie”](docs/media/screenshots/04-no-button-desktop.png)
+![Uciekający przycisk „Nie”](docs/media/screenshots/03-no-button.png)
 
-![Wybór aktywności i koszyk](docs/media/screenshots/05-activities-desktop.png)
+![Wybór aktywności i koszyk](docs/media/screenshots/04-activities.png)
 
-![Modal specjalnego życzenia](docs/media/screenshots/06-wish-modal-desktop.png)
+![Modal specjalnego życzenia](docs/media/screenshots/05-wish-modal.png)
 
-![Wybór dnia i godziny](docs/media/screenshots/07-pick-desktop.png)
+![Wybór dnia i godziny](docs/media/screenshots/06-pick.png)
 
 ### Podziękowanie
 
-| Desktop | Mobile |
-|---------|--------|
-| ![Paragon — desktop](docs/media/screenshots/08-thanks-desktop.png) | ![Paragon — mobile](docs/media/screenshots/09-thanks-mobile.png) |
+![Paragon](docs/media/screenshots/07-thanks.png)
 
 ---
 
@@ -45,15 +39,13 @@ Pełnoekranowa animacja `hand.json`: kliknij / dotknij przycisk → animacja kli
 5. **Termin** — customowe dropdowny: dzień (od dziś do końca miesiąca) i godzina (10:00–22:00).
 6. **Potwierdzenie** — paragon z podsumowaniem + opcjonalna wysyłka na Formspree + deszcz konfetti 🎉
 
-Bez backendu — działa jako statyczna strona (GitHub Pages, Netlify, dowolny hosting plików).
+Bez backendu — działa jako statyczna strona (GitHub Pages, Netlify, dowolny hosting plików). Layout jest responsywny i działa też na telefonie.
 
 ---
 
 ## Design
 
 UI w palecie **„party keyboard”** (pastelowy błękit, lawenda, krem, fiolet, akcenty konfetti). Fonty: Cormorant Garamond + Caveat (Google Fonts).
-
-Opcjonalny zrzut palety: ![Paleta UI](docs/media/screenshots/11-palette.png)
 
 ---
 
@@ -86,14 +78,11 @@ Aktywności edytujesz w tablicy `ACTIVITIES` w tym samym pliku.
 
 ```
 date-invite/
-├── index.html          # Cała aplikacja (HTML + CSS + JS)
-├── hand.json           # Animacja Lottie (intro)
-├── wroclaw.jpg         # Asset (opcjonalny / legacy)
+├── index.html
+├── hand.json
+├── wroclaw.jpg
 ├── README.md
-└── docs/
-    └── media/
-        ├── SCREENSHOTS.md    # Instrukcja: co i gdzie zeskreenować
-        └── screenshots/      # Tu wrzucasz PNG/JPG do README
+└── docs/media/screenshots/
 ```
 
 ---
