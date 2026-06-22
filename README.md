@@ -1,6 +1,6 @@
 # Date Invite 💌
 
-Interaktywna, jednostronicowa strona-zaproszenie na randkę / spotkanie. Zamiast suchego „kiedy masz czas?” — animowane intro, zabawny przycisk „Nie”, wybor aktywności z koszykiem i „paragon” podsumowujący plan.
+Interaktywna, jednostronicowa strona-zaproszenie na randkę / spotkanie. Zamiast suchego „kiedy masz czas?” - animowane intro, zabawny przycisk „Nie”, wybor aktywności z koszykiem i „paragon” podsumowujący plan.
 
 ---
 
@@ -32,14 +32,14 @@ Pełnoekranowa animacja `hand.json`: kliknij przycisk → animacja kliku → wej
 
 ## Co robi ta strona?
 
-1. **Intro** — animacja Lottie na pełny ekran; użytkownik musi kliknąć, żeby wejść dalej.
-2. **Pytanie** — „Kiedy kolejne spotkanie?” z przyciskami Tak / Nie (przycisk „Nie” ucieka i pojawiają się emoji).
-3. **Aktywności** — wielokrotny wybor kafelków (spacer, jedzonko, piknik, planszówki, zoo, sport, ogród japoński) + opcjonalne **specjalne życzenie**.
-4. **Koszyk** — licznik wybranych pozycji; emoji „wlatuje” do koszyka w rogu.
-5. **Termin** — customowe dropdowny: dzień (od dziś do końca miesiąca) i godzina (10:00–22:00).
-6. **Potwierdzenie** — paragon z podsumowaniem + opcjonalna wysyłka na Formspree + deszcz konfetti 🎉
+1. **Intro** - animacja Lottie na pełny ekran; użytkownik musi kliknąć, żeby wejść dalej.
+2. **Pytanie** - „Kiedy kolejne spotkanie?” z przyciskami Tak / Nie (przycisk „Nie” ucieka i pojawiają się emoji).
+3. **Aktywności** - wielokrotny wybor kafelków (spacer, jedzonko, piknik, planszówki, zoo, sport, ogród japoński) + opcjonalne **specjalne życzenie**.
+4. **Koszyk** - licznik wybranych pozycji; emoji „wlatuje” do koszyka w rogu.
+5. **Termin** - customowe dropdowny: dzień (od dziś do końca miesiąca) i godzina (10:00–22:00).
+6. **Potwierdzenie** - paragon z podsumowaniem + opcjonalna wysyłka na Formspree + deszcz konfetti 🎉
 
-Bez backendu — działa jako statyczna strona (GitHub Pages, Netlify, dowolny hosting plików). Layout jest responsywny i działa też na telefonie.
+Bez backendu - działa jako statyczna strona (GitHub Pages, Netlify, dowolny hosting plików). Layout jest responsywny i działa też na telefonie.
 
 ---
 
@@ -57,7 +57,7 @@ python3 -m http.server 8000
 ```
 
 Otwórz [http://localhost:8000](http://localhost:8000).  
-**Nie otwieraj `index.html` przez `file://`** — animacja Lottie i `hand.json` wymagają serwera.
+**Nie otwieraj `index.html` przez `file://`** - animacja Lottie i `hand.json` wymagają serwera.
 
 ---
 
@@ -90,12 +90,12 @@ date-invite/
 ## Technologie
 
 - Czysty HTML / CSS / JavaScript (bez frameworka)
-- [lottie-player](https://github.com/LottieFiles/lottie-player) (CDN) — intro
-- [Formspree](https://formspree.io/) — opcjonalne powiadomienie e-mail
+- [lottie-player](https://github.com/LottieFiles/lottie-player) (CDN) - intro
+- [Formspree](https://formspree.io/) - opcjonalne powiadomienie e-mail
 - Responsywny layout (mobile-first, `dvh`, safe area)
 
 ---
 
 ## Licencja
 
-Projekt osobisty — użyj i zmieniaj według uznania. Animacja `hand.json` — sprawdź prawa użytkowania, jeśli pochodzi z zewnętrznego źródła.
+Projekt osobisty - użyj i zmieniaj według uznania. Animacja `hand.json` - sprawdź prawa użytkowania, jeśli pochodzi z zewnętrznego źródła.
