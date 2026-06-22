@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mam pytanie...</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Caveat:wght@600&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.12/dist/lottie-player.js"></script>
+    <style>
+        :root {
+            /* Paleta klawisza party */
+            --key-wall: #C9D8F6;
+            --key-shadow: #8C8BB7;
+            --key-top: #F8EBE3;
+            --key-square: #ECE2D7;
+            --ink: #060216;
+            --violet: #928FF2;
+            --violet-deep: #2C2E63;
+            --pink: #E88582;
+            --pink-light: #F4A7C1;
+            --mustard: #989C4C;
+            --orange: #DC9642;
+            --lavender: #BCBAEF;
+
+            /* Aliasy semanticzne (używane w całym UI) */
+            --rose: var(--violet);
+            --rose-deep: var(--violet-deep);
+            --cream: var(--key-top);
+            --gold: var(--orange);
+
+            --shadow-soft: rgba(140, 139, 183, 0.22);
+            --shadow-mid: rgba(44, 46, 99, 0.28);
+            --shadow-strong: rgba(6, 2, 22, 0.32);
+            --overlay: rgba(6, 2, 22, 0.45);
+            --focus-ring: rgba(146, 143, 242, 0.28);
+            --hover-tint: rgba(188, 186, 239, 0.38);
+            --border-soft: rgba(140, 139, 183, 0.45);
+            --border-light: rgba(188, 186, 239, 0.65);
+            --surface-glass: rgba(248, 235, 227, 0.82);
+            --surface-card: rgba(248, 235, 227, 0.9);
+            --text-muted: #8C8BB7;
+            --text-on-accent: #F8EBE3;
+            --btn-shadow: 0 5px 0 var(--key-shadow), 0 14px 32px var(--shadow-mid);
+            --btn-shadow-sm: 0 3px 0 var(--key-shadow), 0 8px 20px var(--shadow-soft);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background:
+                radial-gradient(circle at 12% 18%, rgba(244, 167, 193, 0.42) 0%, transparent 40%),
+                radial-gradient(circle at 88% 12%, rgba(188, 186, 239, 0.55) 0%, transparent 38%),
+                radial-gradient(circle at 78% 82%, rgba(220, 150, 66, 0.22) 0%, transparent 36%),
+                radial-gradient(circle at 18% 78%, rgba(152, 156, 76, 0.18) 0%, transparent 34%),
+                radial-gradient(circle at 50% 50%, rgba(232, 133, 130, 0.12) 0%, transparent 50%),
+                linear-gradient(165deg, var(--key-wall) 0%, var(--lavender) 42%, var(--key-top) 100%);
+            background-attachment: fixed;
+            color: var(--ink);
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Gdy intro jest aktywne, blokujemy przewijanie strony pod spodem. */
+        body.intro-lock {
+            overflow: hidden;
+            height: 100%;
+        }
+
+        /* ---------- LOTTIE INTRO ---------- */
+        #intro {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background: linear-gradient(155deg, var(--ink) 0%, var(--violet-deep) 48%, var(--key-wall) 48%, var(--key-top) 100%);
+            transition: opacity 1.2s ease;
+        }
+
+        #intro.hide {
+            opacity: 0;
+            pointer-events: none
+        }
+
+        #intro-inner {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+        }
+
+        #hand-lottie {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1.04);
+            /* cover – wypełnia cały ekran bez czarnych pasów */
+            width: max(100vw, calc(100vh * 1.674));
+            height: max(100vh, calc(100vw / 1.674));
+            max-width: none;
+            max-height: none;
+            pointer-events: none;
+        }
+
+        #intro-hit {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            border: none;
+            padding: 0;
+            margin: 0;
+            background: transparent;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #intro-hit:disabled {
+            cursor: default;
+            pointer-events: none;
+        }
+
+        #intro-hint {
+            position: fixed;
+            left: 50%;
+            bottom: max(72px, calc(env(safe-area-inset-bottom) + 56px));
+            z-index: 53;
+            transform: translateX(-50%) translateY(10px);
+            pointer-events: none;
+            font-family: 'Caveat', cursive;
+            font-size: clamp(17px, 4.5vw, 22px);
+            line-height: 1.2;
+            color: var(--key-top);
+            text-shadow: 0 1px 10px rgba(6, 2, 22, 0.55);
+            padding: 7px 16px;
+            border-radius: 28px;
+            background: rgba(146, 143, 242, 0.22);
+            border: 1px solid rgba(188, 186, 239, 0.42);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            opacity: 0;
+            white-space: nowrap;
+            max-width: min(calc(100vw - 48px), 320px);
+            text-align: center;
+            animation: introHintIn 1s ease 1.2s forwards, introHintPulse 2.8s ease-in-out 2.4s infinite;
+        }
+
+        #intro-hint .hint-mouse {
+            display: none;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            #intro-hint .hint-touch {
+                display: none;
+            }
+
+            #intro-hint .hint-mouse {
+                display: inline;
+            }
+        }
+
+        #intro-hint.hide {
+            opacity: 0;
+            transform: translateX(-50%) translateY(14px);
+            transition: opacity .45s ease, transform .45s ease;
+            animation: none;
+        }
+
+        @keyframes introHintIn {
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @keyframes introHintPulse {
+            0%,
+            100% {
+                opacity: .72;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 600px) {
+            #intro-hint {
+                bottom: max(64px, calc(env(safe-area-inset-bottom) + 48px));
+                font-size: clamp(16px, 4.8vw, 20px);
+                padding: 6px 14px;
+                white-space: normal;
+            }
+        }
+
+        #skip {
+            position: fixed;
+            bottom: max(26px, env(safe-area-inset-bottom));
+            right: 28px;
+            z-index: 52;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 15px;
+            letter-spacing: 1px;
+            color: var(--lavender);
+            background: rgba(6, 2, 22, 0.25);
+            border: 1px solid rgba(188, 186, 239, 0.45);
+            padding: 8px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        #skip:hover {
+            color: var(--key-top);
+            border-color: var(--lavender);
+            background: rgba(146, 143, 242, 0.35);
+        }
+
+        /* ---------- HINT W LEWYM DOLNYM ROGU ---------- */
+        #hint {
+            position: fixed;
+            bottom: max(26px, env(safe-area-inset-bottom));
+            left: 28px;
+            z-index: 6;
+            font-family: 'Caveat', cursive;
+            font-size: 20px;
+            color: var(--violet-deep);
+            background: var(--surface-glass);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--border-light);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: var(--btn-shadow-sm);
+            opacity: 0;
+            transform: translateY(10px);
+            pointer-events: none;
+            transition: opacity .8s ease, transform .8s ease;
+        }
+
+        #hint.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width:600px) {
+            #hint {
+                left: 16px;
+                font-size: 18px;
+                padding: 7px 14px;
+            }
+        }
+
+        /* ---------- MAIN STAGE ---------- */
+        .stage {
+            position: relative;
+            z-index: 5;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            padding-top: max(40px, env(safe-area-inset-top));
+            padding-bottom: max(40px, env(safe-area-inset-bottom));
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s ease .2s;
+        }
+
+        /* Gdy treść jest wyższa niż ekran, wyrównaj do góry, by dało się przewinąć. */
+        @media (max-height: 760px) {
+            .stage {
+                align-items: flex-start;
+                padding-top: max(84px, env(safe-area-inset-top));
+            }
+        }
+
+        .stage.show {
+            opacity: 1
+        }
+
+        .card {
+            background: var(--surface-card);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 2px solid var(--border-light);
+            border-radius: 28px;
+            box-shadow: 0 8px 0 rgba(140, 139, 183, 0.28), 0 28px 70px var(--shadow-soft);
+            padding: 54px 46px;
+            max-width: 520px;
+            width: 100%;
+            position: relative;
+        }
+
+        /* Ozdobne serce na krawędzi karty */
+        .card-heart-container {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 70px;
+            background: var(--key-top);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--btn-shadow-sm);
+            border: 2px solid var(--lavender);
+            z-index: 10;
+        }
+
+        .card-heart-container span {
+            font-size: 34px;
+            animation: beat 1.4s ease-in-out infinite;
+            margin-top: 4px;
+        }
+
+        @keyframes beat {
+
+            0%,
+            100% {
+                transform: scale(1)
+            }
+
+            50% {
+                transform: scale(1.16)
+            }
+        }
+
+        h1 {
+            font-size: clamp(30px, 6vw, 52px);
+            font-weight: 600;
+            line-height: 1.12;
+            margin-bottom: 14px;
+            color: var(--rose-deep);
+        }
+
+        .sub {
+            font-size: clamp(17px, 4vw, 21px);
+            font-style: italic;
+            color: var(--key-shadow);
+            opacity: .92;
+            margin-bottom: 34px
+        }
+
+        .btns {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            position: relative;
+            min-height: 140px;
+        }
+
+        button.choice {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(19px, 5vw, 22px);
+            font-weight: 600;
+            padding: 14px 38px;
+            border-radius: 40px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform .15s ease, box-shadow .25s ease;
+        }
+
+        #yes {
+            background: linear-gradient(135deg, var(--violet) 0%, var(--violet-deep) 100%);
+            color: var(--text-on-accent);
+            border-color: var(--ink);
+            box-shadow: var(--btn-shadow);
+        }
+
+        #yes:hover {
+            transform: scale(1.06) translateY(-1px);
+        }
+
+        #no {
+            background: var(--key-top);
+            color: var(--text-muted);
+            border: 2px solid var(--border-soft);
+            box-shadow: var(--btn-shadow-sm);
+            transition: left .22s cubic-bezier(.25, 1.4, .5, 1), top .22s cubic-bezier(.25, 1.4, .5, 1), transform .15s;
+        }
+
+        /* ---------- DATE PICKER STEP ---------- */
+        .step {
+            display: none;
+            animation: fadeUp .7s ease both
+        }
+
+        .step.active {
+            display: block
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(22px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .field {
+            margin: 18px 0;
+            text-align: left
+        }
+
+        .field label {
+            display: block;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--rose-deep)
+        }
+
+        /* ---------- CUSTOMOWY DROPDOWN ---------- */
+        .select {
+            position: relative;
+            width: 100%;
+            font-family: 'Cormorant Garamond', serif;
+            user-select: none;
+        }
+
+        .select-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 19px;
+            padding: 13px 16px;
+            border-radius: 14px;
+            border: 2px solid var(--border-soft);
+            background: var(--key-top);
+            color: var(--ink);
+            cursor: pointer;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .select.open .select-trigger {
+            border-color: var(--violet);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+
+        .select-trigger .arrow {
+            flex: none;
+            color: var(--violet);
+            font-size: 13px;
+            transition: transform .25s ease;
+        }
+
+        .select.open .select-trigger .arrow {
+            transform: rotate(180deg);
+        }
+
+        .select-options {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            z-index: 30;
+            max-height: 240px;
+            overflow-y: auto;
+            background: var(--surface-card);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 2px solid var(--border-light);
+            border-radius: 14px;
+            box-shadow: 0 12px 36px var(--shadow-mid);
+            padding: 6px;
+            opacity: 0;
+            transform: translateY(-8px) scale(.98);
+            transform-origin: top center;
+            pointer-events: none;
+            transition: opacity .2s ease, transform .2s ease;
+        }
+
+        .select.open .select-options {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .select-option {
+            font-size: 18px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            color: var(--ink);
+            cursor: pointer;
+            transition: background .15s ease, color .15s ease;
+        }
+
+        .select-option:hover {
+            background: var(--hover-tint);
+        }
+
+        .select-option.selected {
+            background: linear-gradient(135deg, var(--violet), var(--violet-deep));
+            color: var(--text-on-accent);
+        }
+
+        .select-options::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .select-options::-webkit-scrollbar-thumb {
+            background: rgba(146, 143, 242, 0.45);
+            border-radius: 8px;
+        }
+
+        #send {
+            margin-top: 28px;
+            width: 100%;
+            background: linear-gradient(135deg, var(--violet) 0%, var(--violet-deep) 100%);
+            color: var(--text-on-accent);
+            font-size: 22px;
+            font-weight: 600;
+            padding: 16px;
+            border: 2px solid var(--ink);
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: var(--btn-shadow);
+            transition: transform .15s
+        }
+
+        #send:hover {
+            transform: scale(1.03)
+        }
+
+        /* ---------- KOSZYK (prawy górny róg) ---------- */
+        #cart {
+            position: fixed;
+            top: max(18px, env(safe-area-inset-top));
+            right: 20px;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: var(--surface-glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid var(--border-light);
+            box-shadow: var(--btn-shadow-sm);
+            font-size: 26px;
+            opacity: 0;
+            transform: translateY(-14px) scale(.8);
+            pointer-events: none;
+            transition: opacity .5s ease, transform .5s ease;
+        }
+
+        #cart.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        #cart.bump {
+            animation: cartBump .4s ease;
+        }
+
+        @keyframes cartBump {
+            0% { transform: scale(1) }
+            40% { transform: scale(1.28) }
+            100% { transform: scale(1) }
+        }
+
+        #cart-count {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            min-width: 24px;
+            height: 24px;
+            padding: 0 6px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--pink) 0%, var(--pink-light) 100%);
+            color: var(--ink);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--ink);
+            box-shadow: 0 3px 0 var(--key-shadow);
+            transform: scale(0);
+            transition: transform .25s cubic-bezier(.34, 1.56, .64, 1);
+        }
+
+        #cart-count.show {
+            transform: scale(1);
+        }
+
+        /* element lecący do koszyka */
+        .fly {
+            position: fixed;
+            z-index: 60;
+            font-size: 34px;
+            pointer-events: none;
+            will-change: transform, opacity;
+            transition: transform .8s cubic-bezier(.4, 0, .2, 1), opacity .8s ease;
+        }
+
+        /* ---------- KAFELKI AKTYWNOŚCI ---------- */
+        .tiles {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 22px 0 6px;
+        }
+
+        .tile {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 18px;
+            background: var(--key-square);
+            border: 2px solid var(--border-soft);
+            cursor: pointer;
+            text-align: center;
+            transition: transform .18s ease, box-shadow .25s ease, border-color .25s ease, background .25s ease;
+        }
+
+        .tile:hover {
+            transform: translateY(-3px);
+            border-color: var(--violet);
+            box-shadow: var(--btn-shadow-sm);
+            background: var(--key-top);
+        }
+
+        .tile .emoji {
+            font-size: clamp(28px, 8vw, 40px);
+            line-height: 1;
+        }
+
+        .tile .name {
+            font-size: clamp(14px, 3.6vw, 17px);
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .tile.selected {
+            background: linear-gradient(135deg, var(--violet) 0%, var(--violet-deep) 100%);
+            border-color: var(--ink);
+            box-shadow: var(--btn-shadow);
+        }
+
+        .tile.selected .name {
+            color: var(--text-on-accent);
+        }
+
+        .tile .check {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--key-top);
+            color: var(--violet-deep);
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--ink);
+            opacity: 0;
+            transform: scale(.4);
+            transition: opacity .2s ease, transform .2s cubic-bezier(.34, 1.56, .64, 1);
+        }
+
+        .tile.selected .check {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        #toPick {
+            margin-top: 24px;
+            width: 100%;
+            background: linear-gradient(135deg, var(--violet) 0%, var(--violet-deep) 100%);
+            color: var(--text-on-accent);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-weight: 600;
+            padding: 16px;
+            border: 2px solid var(--ink);
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: var(--btn-shadow);
+            transition: transform .15s, opacity .2s;
+        }
+
+        #toPick:hover {
+            transform: scale(1.03);
+        }
+
+        /* specjalny kafelek życzenia */
+        .tile.special {
+            grid-column: 1 / -1;
+            aspect-ratio: auto;
+            flex-direction: row;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(248, 235, 227, 0.95);
+            border-style: dashed;
+            border-color: var(--orange);
+        }
+
+        .tile.special:hover {
+            border-color: var(--violet);
+        }
+
+        .tile.special .emoji {
+            font-size: clamp(26px, 7vw, 34px);
+        }
+
+        .tile.special.selected {
+            background: linear-gradient(135deg, var(--orange) 0%, var(--mustard) 100%);
+            border-color: var(--ink);
+            border-style: solid;
+        }
+
+        .tile.special.selected .name {
+            color: var(--ink);
+        }
+
+        /* ---------- MODAL ŻYCZENIA ---------- */
+        #wish-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 70;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: var(--overlay);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s ease;
+        }
+
+        #wish-modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .wish-box {
+            width: 100%;
+            max-width: 440px;
+            background: var(--key-top);
+            border-radius: 24px;
+            border: 2px solid var(--lavender);
+            box-shadow: 0 8px 0 rgba(140, 139, 183, 0.35), 0 28px 70px var(--shadow-strong);
+            padding: 32px 28px;
+            text-align: center;
+            transform: translateY(20px) scale(.96);
+            transition: transform .3s cubic-bezier(.34, 1.56, .64, 1);
+        }
+
+        #wish-modal.show .wish-box {
+            transform: translateY(0) scale(1);
+        }
+
+        .wish-box h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(24px, 6vw, 32px);
+            font-weight: 600;
+            color: var(--rose-deep);
+            margin-bottom: 8px;
+        }
+
+        .wish-box p {
+            font-style: italic;
+            opacity: .8;
+            margin-bottom: 18px;
+        }
+
+        #wish-text {
+            width: 100%;
+            min-height: 110px;
+            resize: vertical;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+            color: var(--ink);
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 2px solid var(--border-soft);
+            background: var(--key-square);
+            outline: none;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        #wish-text:focus {
+            border-color: var(--violet);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+            background: var(--key-top);
+        }
+
+        .wish-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .wish-actions button {
+            flex: 1;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 19px;
+            font-weight: 600;
+            padding: 13px;
+            border-radius: 30px;
+            cursor: pointer;
+            border: none;
+            transition: transform .15s ease, box-shadow .25s ease;
+        }
+
+        #wish-cancel {
+            background: var(--key-top);
+            color: var(--text-muted);
+            border: 2px solid var(--border-soft);
+            box-shadow: var(--btn-shadow-sm);
+        }
+
+        #wish-confirm {
+            background: linear-gradient(135deg, var(--violet) 0%, var(--violet-deep) 100%);
+            color: var(--text-on-accent);
+            border: 2px solid var(--ink);
+            box-shadow: var(--btn-shadow);
+        }
+
+        #wish-confirm:hover {
+            transform: scale(1.04);
+        }
+
+        /* ---------- THANK YOU + PARAGON ---------- */
+        #thanks h1 {
+            font-size: clamp(34px, 7vw, 60px)
+        }
+
+        .receipt {
+            margin-top: 26px;
+            background: var(--key-square);
+            border: 2px dashed var(--violet);
+            border-radius: 16px;
+            padding: 22px 24px;
+            text-align: left;
+            box-shadow: var(--btn-shadow-sm);
+        }
+
+        .receipt-head {
+            text-align: center;
+            font-family: 'Caveat', cursive;
+            font-size: clamp(22px, 5vw, 28px);
+            color: var(--violet-deep);
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+            border-bottom: 1px dashed var(--border-soft);
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 18px;
+            margin: 6px 0;
+        }
+
+        .receipt-row .label {
+            color: var(--text-muted);
+        }
+
+        .receipt-row .value {
+            font-weight: 600;
+            color: var(--ink);
+            text-align: right;
+        }
+
+        .receipt-items {
+            list-style: none;
+            margin: 14px 0 0;
+            padding-top: 14px;
+            border-top: 1px dashed var(--border-soft);
+        }
+
+        .receipt-items li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            color: var(--ink);
+            padding: 5px 0;
+        }
+
+        .receipt-items li .dot {
+            color: var(--rose-deep);
+        }
+
+        .receipt-foot {
+            text-align: center;
+            font-family: 'Caveat', cursive;
+            font-size: clamp(20px, 5vw, 26px);
+            color: var(--violet-deep);
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--border-soft);
+        }
+
+        .summary {
+            font-family: 'Caveat', cursive;
+            font-size: clamp(24px, 6vw, 30px);
+            color: var(--rose-deep);
+            margin-top: 26px;
+            line-height: 1.3;
+            white-space: pre-line;
+        }
+
+        /* falling hearts layer */
+        #petals {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 40;
+            overflow: hidden
+        }
+
+        .fpetal {
+            position: absolute;
+            top: -40px;
+            font-size: 24px;
+            animation: fall linear forwards;
+            will-change: transform
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0
+            }
+        }
+
+        /* laughing emojis when "Nie" runs */
+        .laugh {
+            position: fixed;
+            z-index: 45;
+            pointer-events: none;
+            font-size: 38px;
+            animation: pop 1s ease-out forwards;
+            will-change: transform, opacity
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(.3) translateY(0);
+                opacity: 0
+            }
+
+            20% {
+                transform: scale(1.2) translateY(-6px);
+                opacity: 1
+            }
+
+            100% {
+                transform: scale(1) translateY(-50px);
+                opacity: 0
+            }
+        }
+
+        /* ---------- MOBILE ---------- */
+        @media (max-width:600px) {
+            .card {
+                padding: 46px 22px;
+                border-radius: 22px
+            }
+
+            .btns {
+                min-height: 160px;
+                gap: 14px
+            }
+
+            button.choice {
+                padding: 13px 32px
+            }
+
+            .tiles {
+                gap: 10px;
+            }
+
+            .wish-box {
+                padding: 26px 20px;
+            }
+
+            .receipt {
+                padding: 18px 16px;
+            }
+        }
+
+        @media (max-width:420px) {
+            .tiles {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+        }
+
+        @media (max-width:380px) {
+            .card {
+                padding: 42px 18px
+            }
+
+            #cart {
+                width: 50px;
+                height: 50px;
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="intro">
+        <div id="intro-inner">
+            <lottie-player id="hand-lottie" src="hand.json" background="transparent" speed="1" preserveAspectRatio="xMidYMid slice"></lottie-player>
+            <button id="intro-hit" type="button" aria-label="Kliknij przycisk, aby wejść"></button>
+        </div>
+        <p id="intro-hint" aria-hidden="true">
+            <span class="hint-touch">dotknij ekranu 👆</span>
+            <span class="hint-mouse">kliknij, aby wejść</span>
+        </p>
+    </div>
+    <button id="skip">pomiń intro →</button>
+    <div id="hint">PS: Spróbuj kliknąć „Nie” 😉</div>
+
+    <div id="cart">
+        🧺
+        <span id="cart-count">0</span>
+    </div>
+
+    <div id="wish-modal">
+        <div class="wish-box">
+            <h2>Twoje specjalne życzenie ✨</h2>
+            <p>napisz, na co masz ochotę</p>
+            <textarea id="wish-text" placeholder="np. obejrzeć zachód słońca nad Odrą..."></textarea>
+            <div class="wish-actions">
+                <button id="wish-cancel">Przerwij</button>
+                <button id="wish-confirm">Zatwierdź ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="stage" id="stage">
+        <div class="card" id="card">
+
+            <div class="card-heart-container">
+                <span>💙</span>
+            </div>
+
+            <div class="step active" id="ask">
+                <h1>Kiedy spotkanie? <br>👉🏻👈🏻</h1>
+                <p class="sub">no powiedz, że się zgadzasz.....</p>
+                <div class="btns" id="btns">
+                    <button class="choice" id="yes">Tak!</button>
+                    <button class="choice" id="no">Nie</button>
+                </div>
+            </div>
+
+            <div class="step" id="activities">
+                <h1>Wiedziałem! 🌸</h1>
+                <p class="sub">na co masz ochotę? wybierz, ile chcesz</p>
+                <div class="tiles" id="tiles"></div>
+                <button id="toPick">Dalej 🌸</button>
+            </div>
+
+            <div class="step" id="pick">
+                <h1>Super! 🌸</h1>
+                <p class="sub">to teraz wybierz, kiedy Ci pasuje</p>
+                <div class="field">
+                    <label>Dzień</label>
+                    <div class="select" id="day">
+                        <div class="select-trigger">
+                            <span class="select-value"></span>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div class="select-options"></div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Godzina</label>
+                    <div class="select" id="hour">
+                        <div class="select-trigger">
+                            <span class="select-value"></span>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div class="select-options"></div>
+                    </div>
+                </div>
+                <button id="send">Potwierdzam 🌸</button>
+            </div>
+
+            <div class="step" id="thanks">
+                <h1>Nie mogę się<br>doczekać!</h1>
+                <div class="receipt" id="receipt">
+                    <div class="receipt-head">— Nasze spotkanie —</div>
+                    <div class="receipt-row">
+                        <span class="label">Dzień</span>
+                        <span class="value" id="r-day"></span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="label">Godzina</span>
+                        <span class="value" id="r-hour"></span>
+                    </div>
+                    <ul class="receipt-items" id="r-items"></ul>
+                    <div class="receipt-foot">do zobaczenia! ❤️</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="petals"></div>
+
+    <script>
+        /* =========================================================
+           1. KONFIGURACJA  —  ZMIEŃ TO!
+           ========================================================= */
+        const FORMSPREE_ENDPOINT = "";
+        const TWOJE_IMIE = "Wiktor";
+
+        /* =========================================================
+           2. LOTTIE INTRO – hand.json (klik → animacja → strona)
+           ========================================================= */
+        (function () {
+            const IDLE = [0, 20];
+            const HOVER = [20, 48];
+            const CLICK = [48, 168];
+            const ASPECT = 1443 / 863;
+            /* Punkt przycisku w animacji (lewa góra) – normalizowany 0–1 */
+            const BUTTON_HOTSPOT = { x: 0.13, y: 0.26 };
+            const HOVER_RADIUS = 0.62;
+
+            document.body.classList.add('intro-lock');
+
+            const player = document.getElementById('hand-lottie');
+            const introHit = document.getElementById('intro-hit');
+            const introHint = document.getElementById('intro-hint');
+            let introEnded = false;
+            let state = 'waiting'; // waiting | idle | hover | clicking | done
+            let clickFallbackTimer = null;
+            let hoverRaf = null;
+            let pendingMouse = null;
+            const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+            function getAnim() {
+                return player.getLottie();
+            }
+
+            function fitCover() {
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                player.style.width = Math.max(vw, vh * ASPECT) + 'px';
+                player.style.height = Math.max(vh, vw / ASPECT) + 'px';
+            }
+
+            function playSeg(segment, loop) {
+                const anim = getAnim();
+                if (!anim) return;
+                anim.loop = loop;
+                anim.playSegments([segment], true);
+            }
+
+            function startIdle() {
+                if (introEnded || state === 'clicking') return;
+                state = 'idle';
+                introHit.disabled = false;
+                playSeg(IDLE, true);
+            }
+
+            function applyHoverFrame() {
+                hoverRaf = null;
+                if (!pendingMouse || introEnded || state === 'clicking') return;
+
+                const { x, y } = pendingMouse;
+                const rect = introHit.getBoundingClientRect();
+                const nx = (x - rect.left) / rect.width;
+                const ny = (y - rect.top) / rect.height;
+                const dist = Math.hypot(nx - BUTTON_HOTSPOT.x, ny - BUTTON_HOTSPOT.y);
+                const t = Math.max(0, 1 - dist / HOVER_RADIUS);
+                const eased = t * t * (3 - 2 * t); // smoothstep
+
+                const anim = getAnim();
+                if (!anim) return;
+
+                if (eased < 0.06) {
+                    if (state !== 'idle') startIdle();
+                    return;
+                }
+
+                state = 'hover';
+                anim.loop = false;
+                const frame = HOVER[0] + eased * (HOVER[1] - HOVER[0] - 1);
+                anim.goToAndStop(frame, true);
+            }
+
+            function onIntroMouseMove(e) {
+                if (state !== 'idle' && state !== 'hover') return;
+                pendingMouse = { x: e.clientX, y: e.clientY };
+                if (!hoverRaf) hoverRaf = requestAnimationFrame(applyHoverFrame);
+            }
+
+            function onIntroMouseLeave() {
+                pendingMouse = null;
+                if (hoverRaf) {
+                    cancelAnimationFrame(hoverRaf);
+                    hoverRaf = null;
+                }
+                if (state === 'hover') startIdle();
+            }
+
+            function hideIntroHint() {
+                introHint.classList.add('hide');
+            }
+
+            function clearClickFallback() {
+                if (clickFallbackTimer) {
+                    clearTimeout(clickFallbackTimer);
+                    clickFallbackTimer = null;
+                }
+            }
+
+            function onClickDone() {
+                if (introEnded || state !== 'clicking') return;
+                clearClickFallback();
+                const anim = getAnim();
+                if (anim) {
+                    anim.removeEventListener('complete', onAnimComplete);
+                    anim.removeEventListener('enterFrame', onAnimFrame);
+                }
+                endIntro();
+            }
+
+            function onAnimComplete() {
+                if (state === 'clicking') onClickDone();
+            }
+
+            function onAnimFrame() {
+                if (state !== 'clicking') return;
+                const anim = getAnim();
+                if (anim && anim.currentFrame >= CLICK[1] - 2) onClickDone();
+            }
+
+            function startClick() {
+                if (introEnded || state === 'clicking') return;
+
+                const anim = getAnim();
+                if (!anim) {
+                    endIntro();
+                    return;
+                }
+
+                if (state === 'waiting') startIdle();
+
+                state = 'clicking';
+                introHit.disabled = true;
+                hideIntroHint();
+                clearClickFallback();
+
+                anim.removeEventListener('complete', onAnimComplete);
+                anim.removeEventListener('enterFrame', onAnimFrame);
+                anim.loop = false;
+                anim.playSegments([[CLICK[0], CLICK[1]]], true);
+                anim.addEventListener('complete', onAnimComplete);
+                anim.addEventListener('enterFrame', onAnimFrame);
+
+                clickFallbackTimer = setTimeout(onClickDone, 3200);
+            }
+
+            function endIntro() {
+                if (introEnded) return;
+                introEnded = true;
+                hideIntroHint();
+                clearClickFallback();
+                state = 'done';
+                introHit.disabled = true;
+                const anim = getAnim();
+                if (anim) {
+                    anim.removeEventListener('complete', onAnimComplete);
+                    anim.removeEventListener('enterFrame', onAnimFrame);
+                }
+                document.getElementById('intro').classList.add('hide');
+                document.getElementById('skip').style.display = 'none';
+                document.getElementById('stage').classList.add('show');
+                document.body.classList.remove('intro-lock');
+                setTimeout(() => document.getElementById('hint').classList.add('show'), 900);
+            }
+
+            function tryStart() {
+                if (introEnded) return true;
+                if (!getAnim()) return false;
+                fitCover();
+                if (state === 'waiting') startIdle();
+                return true;
+            }
+
+            introHit.addEventListener('click', startClick);
+
+            if (canHover) {
+                introHit.addEventListener('mousemove', onIntroMouseMove);
+                introHit.addEventListener('mouseleave', onIntroMouseLeave);
+            }
+
+            ['ready', 'load', 'rendered'].forEach((ev) => {
+                player.addEventListener(ev, tryStart);
+            });
+
+            window.addEventListener('resize', fitCover);
+
+            let polls = 0;
+            const poll = setInterval(() => {
+                if (tryStart() || polls++ > 60) clearInterval(poll);
+            }, 100);
+
+            document.getElementById('skip').addEventListener('click', endIntro);
+        })();
+
+        /* =========================================================
+           3. UCIEKAJĄCY PRZYCISK "NIE"
+           ========================================================= */
+        const no = document.getElementById('no');
+        const yes = document.getElementById('yes');
+        const btns = document.getElementById('btns');
+        const laughs = ['😂', '🤣', '😆', '😜', '😝', '🙈', '😏'];
+
+        function runAway() {
+            no.style.position = 'absolute';
+            const area = btns.getBoundingClientRect();
+            const w = no.offsetWidth, h = no.offsetHeight;
+            const pad = 6;
+            const maxX = Math.max(0, area.width - w - pad);
+            const maxY = Math.max(0, area.height - h - pad);
+            const x = pad + Math.random() * maxX;
+            const y = pad + Math.random() * maxY;
+            no.style.left = x + 'px';
+            no.style.top = y + 'px';
+            no.style.transform = 'scale(' + (0.85 + Math.random() * 0.25) + ')';
+            spawnLaugh();
+        }
+
+        function spawnLaugh() {
+            const r = no.getBoundingClientRect();
+            const el = document.createElement('div');
+            el.className = 'laugh';
+            el.textContent = laughs[Math.floor(Math.random() * laughs.length)];
+            el.style.left = (r.left + r.width / 2 - 19 + (Math.random() - .5) * 40) + 'px';
+            el.style.top = (r.top - 10) + 'px';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1000);
+        }
+
+        no.addEventListener('mouseenter', runAway);
+        no.addEventListener('click', (e) => { e.preventDefault(); runAway(); });
+        no.addEventListener('touchstart', (e) => { e.preventDefault(); runAway(); }, { passive: false });
+
+        yes.addEventListener('click', () => {
+            burstPetals(40);
+            document.getElementById('hint').classList.remove('show');
+            document.getElementById('ask').classList.remove('active');
+            document.getElementById('activities').classList.add('active');
+            document.getElementById('cart').classList.add('show');
+        });
+
+        /* =========================================================
+           3b. KAFELKI AKTYWNOŚCI + KOSZYK
+           ========================================================= */
+        const ACTIVITIES = [
+            { id: 'spacer', name: 'Spacer', emoji: '🚶' },
+            { id: 'jedzonko', name: 'Jedzonko', emoji: '🍝' },
+            { id: 'piknik', name: 'Piknik w parku', emoji: '🌳' },
+            { id: 'planszowki', name: 'Planszówki', emoji: '🎲' },
+            { id: 'zoo', name: 'Zoo', emoji: '🦁' },
+            { id: 'sport', name: 'Sport', emoji: '🏓' },
+            { id: 'ogrod', name: 'Ogród Japoński', emoji: '🌸' }
+        ];
+
+        const selectedActivities = new Set();
+        const tilesEl = document.getElementById('tiles');
+        const cartEl = document.getElementById('cart');
+        const cartCountEl = document.getElementById('cart-count');
+
+        function updateCartCount() {
+            const n = selectedActivities.size;
+            cartCountEl.textContent = n;
+            cartCountEl.classList.toggle('show', n > 0);
+            cartEl.classList.remove('bump');
+            void cartEl.offsetWidth; // restart animacji
+            cartEl.classList.add('bump');
+        }
+
+        function flyToCart(emoji, fromEl) {
+            const start = fromEl.getBoundingClientRect();
+            const end = cartEl.getBoundingClientRect();
+            const fly = document.createElement('div');
+            fly.className = 'fly';
+            fly.textContent = emoji;
+            fly.style.left = (start.left + start.width / 2 - 17) + 'px';
+            fly.style.top = (start.top + start.height / 2 - 17) + 'px';
+            document.body.appendChild(fly);
+
+            const dx = (end.left + end.width / 2) - (start.left + start.width / 2);
+            const dy = (end.top + end.height / 2) - (start.top + start.height / 2);
+
+            requestAnimationFrame(() => {
+                fly.style.transform = `translate(${dx}px, ${dy}px) scale(.35)`;
+                fly.style.opacity = '0.2';
+            });
+            setTimeout(() => fly.remove(), 850);
+        }
+
+        ACTIVITIES.forEach(act => {
+            const tile = document.createElement('div');
+            tile.className = 'tile';
+            tile.innerHTML = `
+                <span class="check">✓</span>
+                <span class="emoji">${act.emoji}</span>
+                <span class="name">${act.name}</span>`;
+            tile.addEventListener('click', () => {
+                if (selectedActivities.has(act.id)) {
+                    selectedActivities.delete(act.id);
+                    tile.classList.remove('selected');
+                } else {
+                    selectedActivities.add(act.id);
+                    tile.classList.add('selected');
+                    flyToCart(act.emoji, tile);
+                }
+                updateCartCount();
+            });
+            tilesEl.appendChild(tile);
+        });
+
+        /* --- Specjalny kafelek: Twoje specjalne życzenie --- */
+        const wishState = { text: '' };
+        const specialTile = document.createElement('div');
+        specialTile.className = 'tile special';
+        specialTile.innerHTML = `
+            <span class="check">✓</span>
+            <span class="emoji">✨</span>
+            <span class="name">Twoje specjalne życzenie</span>`;
+        tilesEl.appendChild(specialTile);
+
+        const wishModal = document.getElementById('wish-modal');
+        const wishTextEl = document.getElementById('wish-text');
+
+        function openWishModal() {
+            wishTextEl.value = wishState.text;
+            wishModal.classList.add('show');
+            document.body.classList.add('intro-lock');
+            setTimeout(() => wishTextEl.focus(), 250);
+        }
+        function closeWishModal() {
+            wishModal.classList.remove('show');
+            document.body.classList.remove('intro-lock');
+        }
+
+        specialTile.addEventListener('click', openWishModal);
+
+        document.getElementById('wish-cancel').addEventListener('click', closeWishModal);
+
+        document.getElementById('wish-confirm').addEventListener('click', () => {
+            const txt = wishTextEl.value.trim();
+
+            // Puste pole + było już zapisane życzenie => usuń z koszyka
+            if (!txt) {
+                if (wishState.text) {
+                    wishState.text = '';
+                    selectedActivities.delete('zyczenie');
+                    specialTile.classList.remove('selected');
+                    updateCartCount();
+                }
+                closeWishModal();
+                return;
+            }
+
+            const wasEmpty = !wishState.text;
+            wishState.text = txt;
+            specialTile.classList.add('selected');
+            if (wasEmpty) {
+                selectedActivities.add('zyczenie');
+                flyToCart('✨', specialTile);
+                updateCartCount();
+            }
+            closeWishModal();
+        });
+
+        // klik w tło modala = przerwij
+        wishModal.addEventListener('click', (e) => {
+            if (e.target === wishModal) closeWishModal();
+        });
+
+        document.getElementById('toPick').addEventListener('click', () => {
+            document.getElementById('activities').classList.remove('active');
+            document.getElementById('pick').classList.add('active');
+        });
+
+        /* =========================================================
+           4. GENEROWANIE DAT I GODZIN (customowy dropdown)
+           ========================================================= */
+        const dni = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
+        const mies = ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'];
+
+        const openDropdowns = [];
+
+        function createDropdown(rootId, items) {
+            const root = document.getElementById(rootId);
+            const trigger = root.querySelector('.select-trigger');
+            const valueEl = root.querySelector('.select-value');
+            const list = root.querySelector('.select-options');
+
+            const state = { value: null };
+
+            function close() { root.classList.remove('open'); }
+            function open() {
+                openDropdowns.forEach(d => d !== api && d.close());
+                root.classList.add('open');
+            }
+
+            items.forEach((item, i) => {
+                const opt = document.createElement('div');
+                opt.className = 'select-option';
+                opt.textContent = item.label;
+                opt.addEventListener('click', () => {
+                    state.value = item.value;
+                    valueEl.textContent = item.label;
+                    list.querySelectorAll('.select-option').forEach(o => o.classList.remove('selected'));
+                    opt.classList.add('selected');
+                    close();
+                });
+                list.appendChild(opt);
+                if (i === 0) {
+                    state.value = item.value;
+                    valueEl.textContent = item.label;
+                    opt.classList.add('selected');
+                }
+            });
+
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                root.classList.contains('open') ? close() : open();
+            });
+
+            const api = { close, get value() { return state.value; } };
+            openDropdowns.push(api);
+            return api;
+        }
+
+        document.addEventListener('click', () => openDropdowns.forEach(d => d.close()));
+
+        const dayItems = (function () {
+            const out = [];
+            const now = new Date();
+            const y = now.getFullYear(), m = now.getMonth();
+            const lastDay = new Date(y, m + 1, 0).getDate();
+            for (let d = now.getDate(); d <= lastDay; d++) {
+                const date = new Date(y, m, d);
+                out.push({
+                    value: `${d} ${mies[m]} ${y} (${dni[date.getDay()]})`,
+                    label: `${dni[date.getDay()]}, ${d} ${mies[m]}`
+                });
+            }
+            return out;
+        })();
+
+        const hourItems = (function () {
+            const out = [];
+            for (let h = 10; h <= 22; h++) out.push({ value: `${h}:00`, label: `${h}:00` });
+            return out;
+        })();
+
+        const daySel = createDropdown('day', dayItems);
+        const hourSel = createDropdown('hour', hourItems);
+
+        /* =========================================================
+           5. WYSYŁKA DO FORMSPREE + EKRAN PODZIĘKOWANIA
+           ========================================================= */
+        document.getElementById('send').addEventListener('click', async () => {
+            const dzien = daySel.value;
+            const godz = hourSel.value;
+
+            const chosen = ACTIVITIES.filter(a => selectedActivities.has(a.id));
+            const hasWish = selectedActivities.has('zyczenie') && wishState.text;
+
+            // Pozycje na paragon (emoji + nazwa)
+            const items = chosen.map(a => ({ emoji: a.emoji, name: a.name }));
+            if (hasWish) items.push({ emoji: '✨', name: `Specjalne życzenie: ${wishState.text}` });
+
+            // Paragon na ekranie końcowym
+            document.getElementById('r-day').textContent = dzien;
+            document.getElementById('r-hour').textContent = godz;
+            const itemsEl = document.getElementById('r-items');
+            itemsEl.innerHTML = '';
+            if (items.length) {
+                items.forEach(it => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="dot">•</span> ${it.emoji} ${it.name}`;
+                    itemsEl.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="dot">•</span> niespodzianka 😊`;
+                itemsEl.appendChild(li);
+            }
+
+            // Lista aktywności w mailu jako bullet points
+            const mailNames = items.map(it => it.name);
+            const aktywnosciList = mailNames.length
+                ? mailNames.map(n => `• ${n}`).join('\n')
+                : '(brak — niespodzianka)';
+
+            try {
+                await fetch(FORMSPREE_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({
+                        wiadomosc: `Powiedziała TAK! 🌸\nDzień: ${dzien}\nGodzina: ${godz}\nWybrane aktywności:\n${aktywnosciList}`,
+                        dzien: dzien,
+                        godzina: godz,
+                        aktywnosci: aktywnosciList,
+                        specjalne_zyczenie: hasWish ? wishState.text : '(brak)',
+                        dla: TWOJE_IMIE
+                    })
+                });
+            } catch (e) { console.warn('Nie udało się wysłać powiadomienia:', e); }
+
+            document.getElementById('cart').classList.remove('show');
+            document.getElementById('pick').classList.remove('active');
+            document.getElementById('thanks').classList.add('active');
+            burstPetals(70);
+        });
+
+        /* =========================================================
+           6. DESZCZ KONFETTI (party)
+           ========================================================= */
+        const hearts = ['🎉', '🎊', '✨', '💖', '🎈', '💕', '🌸', '⭐'];
+        function burstPetals(n) {
+            const layer = document.getElementById('petals');
+            for (let i = 0; i < n; i++) {
+                const f = document.createElement('div');
+                f.className = 'fpetal';
+                f.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                f.style.left = Math.random() * 100 + 'vw';
+                f.style.fontSize = (16 + Math.random() * 30) + 'px';
+                f.style.animationDuration = (2.5 + Math.random() * 3) + 's';
+                f.style.animationDelay = (Math.random() * 0.6) + 's';
+                layer.appendChild(f);
+                setTimeout(() => f.remove(), 6000);
+            }
+        }
+    </script>
+</body>
+
+</html>
